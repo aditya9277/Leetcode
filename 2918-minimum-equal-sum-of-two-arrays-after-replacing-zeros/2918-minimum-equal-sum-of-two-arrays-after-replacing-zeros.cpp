@@ -1,6 +1,7 @@
 class Solution {
 public:
     long long minSum(vector<int>& nums1, vector<int>& nums2) {
+        ios_base::sync_with_stdio(false);cin.tie(0);cout.tie(0);
         long long sum1=0,sum2=0,zero1=0,zero2=0;
         for(int &num : nums1){
             sum1+= num==0 ? 1 :num;
