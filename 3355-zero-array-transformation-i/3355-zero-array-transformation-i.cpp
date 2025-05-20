@@ -9,11 +9,11 @@ public:
         for(auto &query : queries){
             int start = query[0];
             int end = query[1];
-
-            diff[start] +=1;
+            int x=1;
+            diff[start] +=x;
 
             if(end+1<n){
-                diff[end]-=1;
+                diff[end+1]-=x;
             }
         }
         
