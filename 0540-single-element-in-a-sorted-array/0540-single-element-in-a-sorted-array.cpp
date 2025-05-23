@@ -13,6 +13,9 @@ public:
         while(l<r){
             int mid = l+(r-l)/2;
 
+            //just an addition to reduce number of operations in some cases
+            // if(nums[mid]!=nums[mid+1] && nums[mid]!=nums[mid-1]) return nums[mid];
+
             if(mid%2==0 && nums[mid]==nums[mid+1] || mid&1 && nums[mid]==nums[mid-1]){
                 l=mid+1;
             }
