@@ -10,7 +10,11 @@ public:
 
         long long n = time.size();
 
-        long long l=1, r=1e14;
+        long long l=1;
+        //either we can set upper bound to max(worst) time possible for the question
+        // long long r=1e14;
+        //or set r to the most optimal bus(which takes lowest time to complete the trip) as upper bound.
+        long long r= (long long)*min_element(time.begin(), time.end()) * totalTrips;
 
         while(l<r){
             long long mid = l+(r-l)/2;
