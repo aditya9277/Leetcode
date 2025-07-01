@@ -11,39 +11,41 @@
  */
 class Solution {
 public:
-    int getLeft(TreeNode *root){
-        TreeNode *temp = root;
-        int lh=0;
+    int getleft(TreeNode * root){
+        TreeNode* temp = root;
+        int lh = 0;
 
         while(temp){
-            temp = temp->left;
+            temp=temp->left;
             lh++;
+
         }
         return lh;
     }
-     int getRight(TreeNode *root){
-        TreeNode *temp = root;
-        int rh=0;
+
+    int getright(TreeNode * root){
+        TreeNode* temp = root;
+        int rh = 0;
 
         while(temp){
-            temp = temp->right;
+            temp=temp->right;
             rh++;
+
         }
         return rh;
     }
+
     int countNodes(TreeNode* root) {
+        if(root==NULL) return 0;
 
-        if(root == NULL){
-            return 0;
-        }
+        int lh = getleft(root);
+        int rh = getright(root);
 
-        int lh = getLeft(root);
-        int rh = getRight(root);
-
-        if(lh == rh){   //perfect binary tree
+        if(lh==rh){
             return (pow(2,lh) - 1);
         }
 
         return countNodes(root->left) + countNodes(root->right) + 1;
+        
     }
 };
