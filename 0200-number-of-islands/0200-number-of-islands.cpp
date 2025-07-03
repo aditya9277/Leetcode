@@ -1,46 +1,34 @@
 class Solution {
 public:
-    void bfs(vector<vector<char>>& grid, vector<vector<int>> &vis, int i, int j){
-        vis[i][j]=1;
-        queue<pair<int,int>> q;
-        q.push({i,j});
-        int n = grid.size();
-        int m = grid[0].size();
-        int delrow[4] = {-1,0,1,0};
-        int delcol[4] = {0,1,0,-1};
 
-        while(!q.empty()){
-            int row=q.front().first;
-            int col=q.front().second;
-            q.pop();
-            
-            for(int k=0;k<4;k++){
-                int nrow = row + delrow[k];
-                int ncol = col + delcol[k];
-
-                if(nrow>=0 && nrow<n && ncol>=0 && ncol<m && grid[nrow][ncol]=='1' && !vis[nrow][ncol]){
-                    vis[nrow][ncol]=1;
-                    q.push({nrow, ncol});
-                }
-            }
+    void dfs(vector<vector<char>>& grid, int i , int j, int m, int n){
+        if(i<0 || i>=m || j<0 || j>=n || grid[i][j]=='0' || grid[i][j]=='$'){
+            return;
         }
+        //mark as visited
+        grid[i][j]='$';
+
+        dfs(grid, i+1,j,m,n);
+        dfs(grid, i-1,j,m,n);
+        dfs(grid, i,j+1,m,n);
+        dfs(grid, i,j-1,m,n);
     }
     int numIslands(vector<vector<char>>& grid) {
-        int n=grid.size();
-        int m=grid[0].size();
-        int cnt=0;
-        vector<vector<int>> vis(n, vector<int>(m,0));
-
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                if(grid[i][j]=='1' && !vis[i][j]){
-                    cnt++;
-                    bfs(grid, vis, i, j);
+        int islands=0;
+        int m = grid.size();
+        int n = grid[0].size();
+ 
+        for(int i =0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(grid[i][j]=='1'){
+                    dfs(grid, i ,j, m,n);
+                    islands++;
                 }
+                
             }
         }
 
-        return cnt;
+        return islands;
         
     }
 };
