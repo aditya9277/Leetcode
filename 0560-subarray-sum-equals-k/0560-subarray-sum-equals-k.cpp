@@ -1,21 +1,24 @@
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
 class Solution {
 public:
     int subarraySum(vector<int>& nums, int k) {
-        //solving through prefix sum
-        unordered_map<int, int> mp; // to track the cumulative cum along with its count
-        int res = 0;
-        int cumsum=0;
-        mp.insert({0,1}); //initially cumulative sum was zero, co counting that also as 1
-
-        for(int i=0;i<nums.size();i++){
-            cumsum+=nums[i];
-
-            if(mp.find(cumsum-k)!=mp.end()){
-                res+=mp[cumsum-k];                
+        ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
+        unordered_map<int, int> prefixSumCount;
+        prefixSumCount[0] = 1;
+        int count = 0;
+        int currentSum = 0;
+        for (int num : nums) {
+            currentSum += num;
+            if (prefixSumCount.count(currentSum - k)) {
+                count += prefixSumCount[currentSum - k];
             }
-            mp[cumsum]++;
+            prefixSumCount[currentSum]++;
         }
-
-        return res;
+        return count;
     }
 };
