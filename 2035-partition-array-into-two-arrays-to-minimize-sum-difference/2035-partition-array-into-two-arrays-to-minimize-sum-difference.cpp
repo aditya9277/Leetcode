@@ -1,67 +1,84 @@
 
-
 class Solution {
 public:
     int minimumDifference(vector<int>& nums) {
-        int N = nums.size();
-        int n = N / 2;
-        
-        vector<vector<int>> left_sums(n + 1);
-        vector<vector<int>> right_sums(n + 1);
-
-        generate_sums(0, n, nums, left_sums);
-        generate_sums(n, N, nums, right_sums);
-        
-        for (int i = 0; i <= n; ++i) {
-            sort(left_sums[i].begin(), left_sums[i].end());
-            left_sums[i].erase(unique(left_sums[i].begin(), left_sums[i].end()), left_sums[i].end());
-            sort(right_sums[i].begin(), right_sums[i].end());
+        int total_n = nums.size();
+        int n = total_n / 2;
+        long long total_sum = 0;
+        for (int x : nums) {
+            total_sum += x;
         }
 
-        long long total_sum = accumulate(nums.begin(), nums.end(), 0LL);
-        
-        int min_diff = INT_MAX;
+        vector<int> left_half(nums.begin(), nums.begin() + n);
+        vector<int> right_half(nums.begin() + n, nums.end());
 
-        for (int k = 0; k <= n; ++k) {
-            for (int s1_left : left_sums[k]) {
-                int rem_k = n - k;
-                auto& s_rights = right_sums[rem_k];
-                
-                long long target_s_right = total_sum / 2 - s1_left;
-                
-                auto it = lower_bound(s_rights.begin(), s_rights.end(), target_s_right);
+        map<int, vector<long long>> left_sums;
+        map<int, vector<long long>> right_sums;
 
-                if (it != s_rights.end()) {
-                    long long s_right = *it;
-                    long long current_S1 = s1_left + s_right;
-                    min_diff = min(min_diff, (int)abs(total_sum - 2 * current_S1));
-                }
-
-                if (it != s_rights.begin()) {
-                    it--;
-                    long long s_right = *it;
-                    long long current_S1 = s1_left + s_right;
-                    min_diff = min(min_diff, (int)abs(total_sum - 2 * current_S1));
-                }
-            }
-        }
-        return min_diff;
-    }
-
-private:
-    void generate_sums(int start_idx, int end_idx, const vector<int>& arr, vector<vector<int>>& sums) {
-        int sz = end_idx - start_idx;
-        int limit = 1 << sz;
-        for (int i = 0; i < limit; ++i) {
-            int current_sum = 0;
+        // Generate subset sums for left_half
+        for (int i = 0; i < (1 << n); ++i) {
+            long long current_sum = 0;
             int count = 0;
-            for (int j = 0; j < sz; ++j) {
+            for (int j = 0; j < n; ++j) {
                 if ((i >> j) & 1) {
-                    current_sum += arr[start_idx + j];
+                    current_sum += left_half[j];
                     count++;
                 }
             }
-            sums[count].push_back(current_sum);
+            left_sums[count].push_back(current_sum);
         }
+
+        // Generate subset sums for right_half
+        for (int i = 0; i < (1 << n); ++i) {
+            long long current_sum = 0;
+            int count = 0;
+            for (int j = 0; j < n; ++j) {
+                if ((i >> j) & 1) {
+                    current_sum += right_half[j];
+                    count++;
+                }
+            }
+            right_sums[count].push_back(current_sum);
+        }
+
+        for (auto& pair : left_sums) {
+            sort(pair.second.begin(), pair.second.end());
+        }
+        for (auto& pair : right_sums) {
+            sort(pair.second.begin(), pair.second.end());
+        }
+
+        long long min_diff = LLONG_MAX;
+
+        for (int k = 0; k <= n; ++k) { // k elements from left_half
+            // We need (n - k) elements from right_half
+            if (right_sums.find(n - k) == right_sums.end()) {
+                continue;
+            }
+
+            for (long long l_sum : left_sums[k]) {
+                // We want left_sum + r_sum to be close to total_sum / 2
+                // Or equivalently, 2 * (l_sum + r_sum) should be close to total_sum
+                // So, 2 * r_sum should be close to total_sum - 2 * l_sum
+                long long target_for_2r = total_sum - 2 * l_sum;
+
+                // Binary search for r_sum in right_sums[n - k]
+                auto& r_vec = right_sums[n - k];
+                
+                // Find element >= target_for_2r / 2
+                auto it = lower_bound(r_vec.begin(), r_vec.end(), target_for_2r / 2);
+
+                if (it != r_vec.end()) {
+                    long long r_sum1 = *it;
+                    min_diff = min(min_diff, abs(2 * (l_sum + r_sum1) - total_sum));
+                }
+                if (it != r_vec.begin()) {
+                    long long r_sum2 = *(--it);
+                    min_diff = min(min_diff, abs(2 * (l_sum + r_sum2) - total_sum));
+                }
+            }
+        }
+
+        return min_diff;
     }
 };
