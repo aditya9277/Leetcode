@@ -14,7 +14,7 @@ public:
         int skip = 0 + solve(coins, target, idx-1, dp);
         int take = INT_MAX;
         if(coins[idx]<=target){
-            take = 1 + solve(coins, target - coins[idx], idx, dp);
+            take = 1 + solve(coins, target - coins[idx], idx, dp);  //whenever these is a infinite supply, multiple use, when "take" keep it on same index.
         }
 
         return dp[idx][target] =  min(skip, take);
@@ -30,8 +30,6 @@ public:
         if(ans>=1e9){
             return -1;
         }
-
-
         return ans;
 
         
